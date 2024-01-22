@@ -61,8 +61,32 @@ route.post("/refresh-token", (req, res, next) => {
   res.send("Refresh Token");
 });
 
-route.post("/login", (req, res, next) => {
-  res.send("Login");
+route.post("/login", async (req, res, next) => {
+  try {
+    const { error } = userValidate(req.body);
+    if (error) {
+      throw createError(error.details[0].message);
+    }
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw createError.NotFound("User not registered");
+    }
+
+    const isValid = await user.isCheckPassword(password);
+    if (!isValid) {
+      throw createError.Unauthorized("Username/password not valid");
+    }
+
+    return res.json({
+      status: "success",
+      message: "Login successfully",
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 route.post("/logout", (req, res, next) => {

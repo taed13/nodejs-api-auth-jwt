@@ -1,0 +1,28 @@
+GET http://localhost:1337 
+
+###
+POST http://localhost:1337/user/register
+Content-Type: application/json
+
+{
+    "email": "tiendatpot12@gmail.com",
+    "password": "abc1232"
+}
+
+###
+GET http://localhost:1337/user/getAllUsers
+
+###
+POST http://localhost:1337/user/refresh-token
+
+###
+POST http://localhost:1337/user/login
+Content-Type: application/json
+
+{
+    "email": "tiendatpot12@gmail.com",
+    "password": "abc1232"
+}
+
+###
+POST http://localhost:1337/user/logout
