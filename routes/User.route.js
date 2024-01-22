@@ -3,7 +3,10 @@ const route = express.Router();
 const createError = require("http-errors");
 const User = require("../models/User.model");
 const { userValidate } = require("../helpers/validation");
-const { signAccessToken } = require("../helpers/jwt_service");
+const {
+  signAccessToken,
+  verifyAccessToken,
+} = require("../helpers/jwt_service");
 
 route.post("/register", async (req, res, next) => {
   try {
@@ -94,6 +97,24 @@ route.post("/login", async (req, res, next) => {
 
 route.post("/logout", (req, res, next) => {
   res.send("Logout");
+});
+
+route.get("/getlists", verifyAccessToken, (req, res, next) => {
+  console.log(req.headers);
+  const listUsers = [
+    {
+      email: "user@example.com",
+    },
+    {
+      email: "user@example.com",
+    },
+  ];
+
+  return res.json({
+    status: "success",
+    message: "Users retrieved successfully",
+    data: listUsers,
+  });
 });
 
 module.exports = route;

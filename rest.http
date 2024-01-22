@@ -26,3 +26,8 @@ Content-Type: application/json
 
 ###
 POST http://localhost:1337/user/logout
+
+
+###
+GET http://localhost:1337/user/getlists
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NWFlNzA5MDQ0NjE2OTlkYjE3MDUzNDAiLCJpYXQiOjE3MDU5MzY5MjQsImV4cCI6MTcwNTkzNjkzNH0.R4jYhC7pEjzH3Dx890Z5_iNT4Bkq7cp65rvmO6mOjyA
