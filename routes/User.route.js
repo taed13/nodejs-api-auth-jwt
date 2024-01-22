@@ -1,34 +1,42 @@
 const express = require("express");
 const route = express.Router();
 const createError = require("http-errors");
-
 const User = require("../models/User.model");
+const { userValidate } = require("../helpers/validation");
 
 route.post("/register", async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) {
-      throw createError.BadRequest();
+    // if (!email || !password) {
+    //   throw createError.BadRequest();
+    // }
+    const { error } = userValidate(req.body);
+    // console.log(error);
+
+    if (error) {
+      throw createError(error.details[0].message);
     }
 
     const isExists = await User.findOne({
-      username: email,
+      email,
     });
 
     if (isExists) {
       throw createError.Conflict(`${email} is already been registered`);
     }
 
-    const isCreate = await User.create({
-      username: email,
+    const user = new User({
+      email,
       password,
     });
+
+    const savedUser = await user.save();
 
     return res.json({
       status: "success",
       message: "User created successfully",
-      data: isCreate,
+      data: savedUser,
     });
   } catch (error) {
     next(error);
