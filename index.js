@@ -7,8 +7,17 @@ const mongoose = require("mongoose");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const connectDatabase = require("./helpers/connections_mongodb");
+const client = require("./helpers/connections_redis");
 
 const PORT = process.env.PORT || 1338;
+
+client.set("foo", "annoystick");
+client.get("foo", (err, value) => {
+  if (err) {
+    console.log(err.message);
+  }
+  console.log(value);
+});
 
 app.get("/", (req, res, next) => {
   res.send("Hello World");

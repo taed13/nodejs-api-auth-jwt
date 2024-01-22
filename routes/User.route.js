@@ -6,6 +6,8 @@ const { userValidate } = require("../helpers/validation");
 const {
   signAccessToken,
   verifyAccessToken,
+  signRefreshToken,
+  verifyRefreshToken,
 } = require("../helpers/jwt_service");
 
 route.post("/register", async (req, res, next) => {
@@ -61,8 +63,25 @@ route.get("/getAllUsers", async (req, res, next) => {
   }
 });
 
-route.post("/refresh-token", (req, res, next) => {
-  res.send("Refresh Token");
+route.post("/refresh-token", async (req, res, next) => {
+  try {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      throw createError.BadRequest();
+    }
+
+    const { userId } = await verifyRefreshToken(refreshToken);
+
+    res.json({
+      status: "success",
+      message: "Token refreshed successfully",
+      accessToken: await signAccessToken(userId),
+      refreshToken: await signRefreshToken(userId),
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 route.post("/login", async (req, res, next) => {
@@ -83,12 +102,14 @@ route.post("/login", async (req, res, next) => {
       throw createError.Unauthorized("Username/password not valid");
     }
 
-    const token = await signAccessToken(user._id);
+    const accessToken = await signAccessToken(user._id);
+    const refreshToken = await signRefreshToken(user._id);
 
     return res.json({
       status: "success",
       message: "Login successfully",
-      accessToken: token,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
     });
   } catch (error) {
     next(error);
@@ -100,7 +121,7 @@ route.post("/logout", (req, res, next) => {
 });
 
 route.get("/getlists", verifyAccessToken, (req, res, next) => {
-  console.log(req.headers);
+  // console.log(req.headers);
   const listUsers = [
     {
       email: "user@example.com",

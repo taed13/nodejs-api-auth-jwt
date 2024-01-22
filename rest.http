@@ -7,13 +7,18 @@ Content-Type: application/json
 {
     "email": "tiendatpot12@gmail.com",
     "password": "abc1232"
-}
+} 
 
 ###
 GET http://localhost:1337/user/getAllUsers
 
 ###
 POST http://localhost:1337/user/refresh-token
+Content-Type: application/json
+
+{
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NWFlNzA5MDQ0NjE2OTlkYjE3MDUzNDAiLCJpYXQiOjE3MDU5NDE2NDYsImV4cCI6MTczNzQ5OTI0Nn0.RukPIXk5W7qA5v3JOco_LA8tSFsNryS6TNcVX02xYVM"
+}
 
 ###
 POST http://localhost:1337/user/login
@@ -30,4 +35,4 @@ POST http://localhost:1337/user/logout
 
 ###
 GET http://localhost:1337/user/getlists
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NWFlNzA5MDQ0NjE2OTlkYjE3MDUzNDAiLCJpYXQiOjE3MDU5MzY5MjQsImV4cCI6MTcwNTkzNjkzNH0.R4jYhC7pEjzH3Dx890Z5_iNT4Bkq7cp65rvmO6mOjyA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NWFlNzA5MDQ0NjE2OTlkYjE3MDUzNDAiLCJpYXQiOjE3MDU5NDE3MzMsImV4cCI6MTcwNTk0MTc5M30.HWIqnf9YLpmDQbq7nvHN5IbNl7ySCBqFD5nNwmnP5Z0
