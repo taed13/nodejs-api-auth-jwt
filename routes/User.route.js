@@ -35,6 +35,20 @@ route.post("/register", async (req, res, next) => {
   }
 });
 
+route.get("/getAllUsers", async (req, res, next) => {
+  try {
+    const users = await User.find({});
+
+    return res.json({
+      status: "success",
+      message: "Users retrieved successfully",
+      data: users,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 route.post("/refresh-token", (req, res, next) => {
   res.send("Refresh Token");
 });
