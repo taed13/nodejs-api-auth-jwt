@@ -4,6 +4,8 @@ const createError = require("http-errors");
 require("dotenv").config();
 const UserRoute = require("./routes/User.route");
 const mongoose = require("mongoose");
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 1338;
 
@@ -21,9 +23,12 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  res.json({
-    status: err.status || 404,
-    message: err.message,
+  res.status(err.status || 500);
+  res.send({
+    error: {
+      status: err.status || 500,
+      message: err.message,
+    },
   });
 });
 
