@@ -20,15 +20,14 @@ client.get("foo", (err, value) => {
 });
 
 app.get("/", (req, res, next) => {
-  res.send("Hello World");
+  res.json({
+    message: "JWT Authentication!!!",
+  });
 });
 
 app.use("/user", UserRoute);
 
 app.use((req, res, next) => {
-  //   const error = new Error("Not found");
-  //   error.status = 404;
-  //   next(error);
   next(createError.NotFound("This route does not exist"));
 });
 

@@ -1,6 +1,9 @@
 const JWT = require("jsonwebtoken");
 const createError = require("http-errors");
 
+const client = require("../helpers/connections_redis");
+require("dotenv").config();
+
 const signAccessToken = async (userId) => {
   return new Promise((resolve, reject) => {
     const payload = {
@@ -58,6 +61,19 @@ const signRefreshToken = async (userId) => {
         console.log(err.message);
         reject(createError.InternalServerError());
       }
+      client.set(
+        userId.toString(),
+        token,
+        "EX",
+        365 * 24 * 60 * 60,
+        (err, reply) => {
+          if (err) {
+            console.log(err.message);
+            reject(createError.InternalServerError());
+          }
+          resolve(token);
+        }
+      );
 
       resolve(token);
     });
@@ -73,8 +89,16 @@ const verifyRefreshToken = async (refreshToken) => {
         if (err) {
           return reject(createError.Unauthorized());
         }
-
-        resolve(payload);
+        client.get(payload.userId, (err, reply) => {
+          if (err) {
+            console.log(err.message);
+            reject(createError.InternalServerError());
+          }
+          if (refreshToken === reply) {
+            return resolve(payload);
+          }
+          reject(createError.Unauthorized());
+        });
       }
     );
   });

@@ -3,6 +3,7 @@ const route = express.Router();
 const createError = require("http-errors");
 const User = require("../models/User.model");
 const { userValidate } = require("../helpers/validation");
+const client = require("../helpers/connections_redis");
 const {
   signAccessToken,
   verifyAccessToken,
@@ -14,12 +15,7 @@ route.post("/register", async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    // if (!email || !password) {
-    //   throw createError.BadRequest();
-    // }
     const { error } = userValidate(req.body);
-    // console.log(error);
-
     if (error) {
       throw createError(error.details[0].message);
     }
@@ -27,7 +23,6 @@ route.post("/register", async (req, res, next) => {
     const isExists = await User.findOne({
       email,
     });
-
     if (isExists) {
       throw createError.Conflict(`${email} is already been registered`);
     }
@@ -116,8 +111,28 @@ route.post("/login", async (req, res, next) => {
   }
 });
 
-route.post("/logout", (req, res, next) => {
-  res.send("Logout");
+route.delete("/logout", async (req, res, next) => {
+  try {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      throw createError.BadRequest();
+    }
+
+    const { userId } = await verifyRefreshToken(refreshToken);
+    client.del(userId, (err, val) => {
+      if (err) {
+        console.log(err.message);
+        throw createError.InternalServerError();
+      }
+      res.json({
+        status: "success",
+        message: "Logout successfully",
+      });
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 route.get("/getlists", verifyAccessToken, (req, res, next) => {
