@@ -1,5 +1,3 @@
-// connections_mongodb.js
-
 const mongoose = require("mongoose");
 require("dotenv").config();
 
@@ -8,7 +6,6 @@ const connectDatabase = () => {
   console.log(`Connecting to ${mongoDbUrl}`);
   mongoose.Promise = global.Promise;
 
-  // connecting to the database
   mongoose
     .connect(mongoDbUrl, {
       useNewUrlParser: true,

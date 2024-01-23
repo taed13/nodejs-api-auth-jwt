@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.5/axios.min.js"
+      integrity="sha512-TjBzDQIDnc6pWyeM1bhMnDxtWH0QpOXMcVooglXrali/Tj7W569/wd4E8EDjk1CwOAOPSJon1VfcEt1BI4xIrA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+  </head>
+  <body>
+    <button id="_login">Login</button>
+    <button id="_getlist">Get List</button>
+
+    <script>
+      /// create instance axios config
+      const instance = axios.create({
+        baseURL: "/api",
+        timeout: 1000 * 3,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      // process data before sending to server
+      instance.interceptors.request.use(
+        async (config) => {
+          if (
+            config.url.indexOf("/login") >= 0 ||
+            config.url.indexOf("/refresh_token") >= 0
+          )
+            return config;
+
+          //   const { token, timeExpired } = await instance.getLocalAccessToken();
+          //   if (accessToken) {
+          //     const { token, timeExpired } = accessToken;
+          //   } else {
+          //     // Handle case where accessToken is null...
+          //   }
+        },
+        (error) => {
+          console.log("error");
+          return Promise.reject(error);
+        }
+      );
+
+      // process data after receiving from server
+      instance.interceptors.response.use(
+        (response) => {
+          console.log("response");
+          return response;
+        },
+        (error) => {
+          console.log("error");
+          return Promise.reject(error);
+        }
+      );
+
+      // FUNCTION
+      const btn_login = document.getElementById("_login");
+
+      if (btn_login) {
+        btn_login.addEventListener("click", async () => {
+          const {
+            status,
+            elements: { token, timeExpired },
+          } = await login();
+          if (status === 200) {
+            instance.setLocalAccessToken({ token, timeExpired });
+          }
+        });
+      }
+
+      const btn_getlist = document.getElementById("_getlist");
+      if (btn_getlist) {
+        btn_getlist.addEventListener("click", async () => {
+          const { status, elements } = await getUsers();
+          if (status === 200) {
+            console.table(elements);
+          }
+        });
+      }
+
+      async function getUsers() {
+        const response = await instance.get("/users");
+        return response.elements;
+      }
+
+      async function login() {
+        const response = await instance.get("/login");
+        return response.data;
+      }
+
+      async function refreshToken() {
+        const response = await instance.get("/refresh_token");
+        return response.data;
+      }
+
+      instance.setLocalAccessToken = async ({ token, timeExpired }) => {
+        window.localStorage.setItem(
+          "access_token",
+          JSON.stringify({ token, timeExpired })
+        );
+      };
+
+      instance.getLocalAccessToken = async () => {
+        const access_token = window.localStorage.getItem("access_token");
+        if (access_token) {
+          return JSON.parse(access_token);
+        }
+        return null;
+      };
+    </script>
+  </body>
+</html>

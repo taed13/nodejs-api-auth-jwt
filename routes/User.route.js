@@ -11,15 +11,10 @@ const {
 } = require("../controllers/User.controller");
 
 route.post("/register", register);
-
 route.get("/getAllUsers", getAllUsers);
-
 route.post("/refresh-token", refreshToken);
-
 route.post("/login", login);
-
 route.delete("/logout", logout);
-
 route.get("/getlists", verifyAccessToken, getlists);
 
 module.exports = route;

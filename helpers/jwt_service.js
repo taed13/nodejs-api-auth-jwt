@@ -1,6 +1,5 @@
 const JWT = require("jsonwebtoken");
 const createError = require("http-errors");
-
 const client = require("../helpers/connections_redis");
 require("dotenv").config();
 
@@ -40,7 +39,6 @@ const verifyAccessToken = (req, res, next) => {
         err.name === "JsonWebTokenError" ? "Unauthorized" : err.message;
       return next(createError.Unauthorized(message));
     }
-
     req.payload = payload;
     next();
   });
